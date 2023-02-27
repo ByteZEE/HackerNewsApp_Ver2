@@ -84,27 +84,12 @@ class StoryRepository private constructor(
 
     fun getFavourite(): Story = pref.getStory()
 
-//    fun getStories() = networkBoundResource(
-//        query = {
-//            storyDao.getAllStories()
-//        },
-//        fetch = {
-//            api.getTopStoryIds()
-//        },
-//        saveFetchResult = { stories ->
-//            db.withTransaction {
-//                storyDao.insertStory(stories.map { StoryID(id = it) })
-//                storyDao.getAllStories()
-//            }
-//        }
-//    )
-
     fun getDetailWithNRB(id: Int) = networkBoundResource(
         query = {
             storyDao.getStoryDetail()
         },
         shouldFetch = { cachedData ->
-            cachedData == null
+            cachedData.isEmpty()
         },
         fetch = {
             api.getDetailStory(id).toStory()

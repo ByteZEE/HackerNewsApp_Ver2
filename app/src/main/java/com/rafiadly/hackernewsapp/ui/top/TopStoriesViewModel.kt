@@ -11,8 +11,9 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.zip
 import kotlinx.coroutines.launch
 
-class TopStoriesViewModel(private val storyRepository: StoryRepository):ViewModel() {
+class TopStoriesViewModel(private val storyRepository: StoryRepository) : ViewModel() {
     private var _topStoryIds: MutableLiveData<List<Int>> = MutableLiveData()
+    val topStoryIds: LiveData<List<Int>> = _topStoryIds
 
     private var _topStories: MutableLiveData<List<Story>> = MutableLiveData()
     val topStories: LiveData<List<Story>> = _topStories
@@ -23,12 +24,14 @@ class TopStoriesViewModel(private val storyRepository: StoryRepository):ViewMode
     private var _favStory = MutableLiveData<Story>()
     val favStory: LiveData<Story> = _favStory
 
+    private val listStories = arrayListOf<Story>()
+
     init {
         getTopStoryIds()
         getFavStory()
     }
 
-    private fun getTopStoryIds(){
+    private fun getTopStoryIds() {
         viewModelScope.launch {
             _loading.postValue(true)
 //            for (i in 1..3) {
@@ -44,24 +47,26 @@ class TopStoriesViewModel(private val storyRepository: StoryRepository):ViewMode
 //                loadStories()
 //            }
 
-            storyRepository.getTopStoryIds().collect{
+            storyRepository.getTopStoryIds().collect {
                 _topStoryIds.value = if (it is Resource.Success) it.data else emptyList()
-                loadStories()
             }
         }
     }
 
-    private fun loadStories() {
+    /**
+     * Ini ngga jalan kodenya
+     */
+    fun loadStories() {
         viewModelScope.launch {
-            if (_topStoryIds.value!!.isNotEmpty()){
+            if (_topStoryIds.value!!.isNotEmpty()) {
                 _loading.postValue(true)
-                val listStories = arrayListOf<Story>()
+
 //                Log.d("Size : ", "${_topStoryIds.value!!.take(20).size}")
                 _topStoryIds.value!!.take(20).forEach {
                     Log.d("Database : ", it.toString())
 //                    Log.d("Check :" , "$it")
-                    storyRepository.getDetailWithNRB(it).collect{ story ->
-                        if (story is Resource.Success){
+                    storyRepository.getDetailWithNRB(it).collect { story ->
+                        if (story is Resource.Success) {
 //                            Log.d("Checkpoint", "1")
 //                            Log.d("Take : ", "${story.data?.id}")
 //                            listStories.add(Story(
@@ -70,17 +75,36 @@ class TopStoriesViewModel(private val storyRepository: StoryRepository):ViewMode
 //                                score = (if (story.data != null) story.data.score else 0)
 //                            ))
                             story.data?.forEach {
-                                listStories.add(Story(
-                                    id = if (it != null) it.id else 0,
-                                    title = (if (it != null) it.title else "").toString(),
-                                    score = (if (it != null) it.score else 0)
-                                ))
+                                listStories.add(
+                                    Story(
+                                        id = it.id,
+                                        title = (it.title),
+                                        score = (it.score)
+                                    )
+                                )
                             }
+                            _topStories.postValue(listStories)
+                            _loading.postValue(false)
                         }
                     }
                 }
-                _topStories.postValue(listStories)
-                _loading.postValue(false)
+
+            }
+        }
+    }
+
+    fun cacheDetailStory(id: Int) {
+        viewModelScope.launch {
+            storyRepository.getDetailWithNRB(id).collect { resource ->
+                when (resource) {
+                    is Resource.Error -> _loading.postValue(false)
+                    is Resource.Loading -> _loading.postValue(true)
+                    is Resource.Success -> {
+                        val story = resource.data
+                        _topStories.postValue(story!!)
+                        _loading.postValue(false)
+                    }
+                }
             }
         }
     }

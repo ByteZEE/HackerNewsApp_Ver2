@@ -62,6 +62,14 @@ class HomeFragment : Fragment() {
                 view.findNavController().navigate(toDetailFragment)
             }
         }
+
+        viewModel.topStoryIds.observe(viewLifecycleOwner) { ids ->
+            if (ids.isNotEmpty()) {
+                ids.take(20).forEach {  id ->
+                    viewModel.cacheDetailStory(id)
+                }
+            }
+        }
     }
 
     private fun showLoading(loading: Boolean) {
