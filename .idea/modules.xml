@@ -2,7 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/HackerNewsApp_Ver2.iml" filepath="$PROJECT_DIR$/.idea/modules/HackerNewsApp_Ver2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/HackerNewsApp.iml" filepath="$PROJECT_DIR$/.idea/modules/HackerNewsApp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/HackerNewsApp.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/HackerNewsApp.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/HackerNewsApp.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/HackerNewsApp.app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/HackerNewsApp.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/HackerNewsApp.app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/HackerNewsApp.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/HackerNewsApp.app.unitTest.iml" />
     </modules>
   </component>
 </project>

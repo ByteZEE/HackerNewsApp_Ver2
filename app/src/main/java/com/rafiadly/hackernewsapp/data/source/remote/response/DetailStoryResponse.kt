@@ -36,5 +36,5 @@ fun DetailStoryResponse.toStory() =
         date = DateFormatter.timestampToDate(time.toLong()),
         author = by,
         desc = text ?: "No Description",
-        commentIds = kids ?: emptyList()
+//        commentIds = kids ?: emptyList()
     )

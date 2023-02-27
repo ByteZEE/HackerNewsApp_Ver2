@@ -36,11 +36,16 @@ class TopStoriesViewModel(private val storyRepository: StoryRepository):ViewMode
 //                    Log.d("Checkpoint", "1")
 //                }
 //            }
-            storyRepository.getStories().collect{ it ->
-                _topStoryIds.value = if (it is Resource.Success) it.data?.map { it.id } else emptyList()
-                if (it is Resource.Success) {
-                    Log.d("Jumlah ID : ", _topStoryIds.value?.size.toString())
-                }
+//            storyRepository.getStories().collect{ it ->
+//                _topStoryIds.value = if (it is Resource.Success) it.data?.map { it.id } else emptyList()
+//                if (it is Resource.Success) {
+//                    Log.d("Jumlah ID : ", _topStoryIds.value?.size.toString())
+//                }
+//                loadStories()
+//            }
+
+            storyRepository.getTopStoryIds().collect{
+                _topStoryIds.value = if (it is Resource.Success) it.data else emptyList()
                 loadStories()
             }
         }
@@ -55,15 +60,22 @@ class TopStoriesViewModel(private val storyRepository: StoryRepository):ViewMode
                 _topStoryIds.value!!.take(20).forEach {
                     Log.d("Database : ", it.toString())
 //                    Log.d("Check :" , "$it")
-                    storyRepository.getStoryDetailsOffline(it).collect{ story ->
+                    storyRepository.getDetailWithNRB(it).collect{ story ->
                         if (story is Resource.Success){
 //                            Log.d("Checkpoint", "1")
 //                            Log.d("Take : ", "${story.data?.id}")
-                            listStories.add(Story(
-                                id = if (story.data != null) story.data.id else 0,
-                                title = (if (story.data != null) story.data.title else "").toString(),
-                                score = (if (story.data != null) story.data.score else 0)
-                            ))
+//                            listStories.add(Story(
+//                                id = if (story.data != null) story.data.id else 0,
+//                                title = (if (story.data != null) story.data.title else "").toString(),
+//                                score = (if (story.data != null) story.data.score else 0)
+//                            ))
+                            story.data?.forEach {
+                                listStories.add(Story(
+                                    id = if (it != null) it.id else 0,
+                                    title = (if (it != null) it.title else "").toString(),
+                                    score = (if (it != null) it.score else 0)
+                                ))
+                            }
                         }
                     }
                 }

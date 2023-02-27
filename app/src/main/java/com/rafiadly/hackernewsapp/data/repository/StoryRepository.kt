@@ -84,89 +84,47 @@ class StoryRepository private constructor(
 
     fun getFavourite(): Story = pref.getStory()
 
-    fun getStories() = networkBoundResource(
-        query = {
-            storyDao.getAllStories()
-        },
-        fetch = {
-            api.getTopStoryIds()
-        },
-        saveFetchResult = { stories ->
-            db.withTransaction {
-                storyDao.insertStory(stories.map { StoryID(id = it) })
-                storyDao.getAllStories()
-            }
-        }
-    )
+//    fun getStories() = networkBoundResource(
+//        query = {
+//            storyDao.getAllStories()
+//        },
+//        fetch = {
+//            api.getTopStoryIds()
+//        },
+//        saveFetchResult = { stories ->
+//            db.withTransaction {
+//                storyDao.insertStory(stories.map { StoryID(id = it) })
+//                storyDao.getAllStories()
+//            }
+//        }
+//    )
 
-
-    fun getStoryDetailsOffline(id: Int) = networkBoundResource(
+    fun getDetailWithNRB(id: Int) = networkBoundResource(
         query = {
-            storyDao.getStoryDetail(id)
+            storyDao.getStoryDetail()
         },
         shouldFetch = { cachedData ->
             cachedData == null
         },
         fetch = {
-            api.getDetailStory(id)
+            api.getDetailStory(id).toStory()
         },
-        saveFetchResult = { detailStories ->
+        saveFetchResult = { story ->
             db.withTransaction {
                 storyDao.insertStoryDetail(
-                    StoryList(
-                        id = detailStories.id,
-                        title = detailStories.title,
-                        score = detailStories.score
+                    Story(
+                        id = story.id,
+                        storyID = story.storyID,
+                        title = story.title,
+                        comments = story.comments,
+                        score = story.score,
+                        date = story.date,
+                        author = story.author,
+                        desc = story.desc
                     )
                 )
-                storyDao.getStoryDetail(id)
+                storyDao.getStoryDetail()
             }
         }
     )
-
-//    fun getStoryDetailsOffline(ids: List<Int>) = networkBoundResource(
-//        query = {
-//            storyDao.getStoryDetails(ids)
-//        },
-//        shouldFetch = { cachedData ->
-//            cachedData.isEmpty()
-//        },
-//        fetch = {
-//            api.getDetailStories(ids)
-//        },
-//        saveFetchResult = { detailStories ->
-//            db.withTransaction {
-//                storyDao.insertStoryDetails(detailStories)
-//            }
-//        }
-//    )
-
-
-//    fun getStoryDetailsOffline(ids: List<Int>) = ids.map { id ->
-//        networkBoundResource(
-//            query = {
-//                storyDao.getStoryDetail(id)
-//            },
-//            shouldFetch = { cachedData ->
-//                cachedData == null
-//            },
-//            fetch = {
-//                api.getDetailStory(id)
-//            },
-//            saveFetchResult = { detailStories ->
-//                db.withTransaction {
-//                    storyDao.insertStoryDetail(
-//                        StoryList(
-//                            id = detailStories.id,
-//                            title = detailStories.title,
-//                            score = detailStories.score
-//                        )
-//                    )
-//                }
-//            }
-//        )
-//    }
-
-
-
 }

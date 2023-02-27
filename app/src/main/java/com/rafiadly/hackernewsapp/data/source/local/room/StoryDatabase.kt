@@ -4,10 +4,12 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.rafiadly.hackernewsapp.data.model.Story
 import com.rafiadly.hackernewsapp.data.model.StoryID
 import com.rafiadly.hackernewsapp.data.model.StoryList
 
-@Database(entities = [StoryList::class, StoryID::class], version = 1)
+//@Database(entities = [StoryList::class, StoryID::class], version = 1)
+@Database(entities = [Story::class], version = 1)
 abstract class StoryDatabase : RoomDatabase() {
     abstract fun storyDao() : StoryDao
 

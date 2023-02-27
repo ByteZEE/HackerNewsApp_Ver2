@@ -55,7 +55,7 @@ class DetailFragment : Fragment() {
                 binding.tvAuthor.text = "By: ${story.author}"
                 binding.tvTime.text = story.date
                 binding.tvDesc.text = story.desc
-                viewModel.setListComment(story.commentIds)
+//                viewModel.setListComment(story.commentIds)
 
                 viewModel.favStory.observe(viewLifecycleOwner) { favStory ->
                     val isFavorite = favStory.id == story.id
